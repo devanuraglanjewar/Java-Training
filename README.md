@@ -1,1 +1,1 @@
-# Java-J
+# Full Stack Java Developer Journey.
