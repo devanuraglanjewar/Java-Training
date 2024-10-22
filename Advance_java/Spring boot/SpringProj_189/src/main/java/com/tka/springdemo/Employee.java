@@ -1,8 +1,6 @@
 package com.tka.springdemo;
 
-import org.springframework.stereotype.Component;
 
-@Component
 public class Employee {
 	private int eid;
 	private String ename;

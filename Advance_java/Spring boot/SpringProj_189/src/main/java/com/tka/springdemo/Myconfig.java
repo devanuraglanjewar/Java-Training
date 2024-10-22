@@ -4,20 +4,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Myconfig {
+public class MyConfig {
 	
-	@Bean("emp1")
-	public Employee getBeen1() {
-		return new Employee(101,"John",10);
+	@Bean ("emp1")
+	public Employee getBean1() {
+		
+		return new Employee(1,"Anurag",22);
 	}
 	
 	@Bean("emp2")
-	public Employee getBeen2() {
-		return new Employee(102,"Harry",15);
+	public Employee getBean2() {
+		
+		return new Employee(2,"Om",22);
 	}
 	
 	@Bean("emp3")
-	public Employee getBeen3() {
-		return new Employee(103,"Scott",50);
+	public Employee getBean3() {
+		
+		return new Employee(3,"Pratik",21);
 	}
+	
 }
