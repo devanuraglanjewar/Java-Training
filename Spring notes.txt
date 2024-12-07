@@ -1,0 +1,24 @@
+Spring notes:
+
+Spring is framework of framework 
+>>> Because it has various type of sub-module
+	Sprinng security,
+	spring Boot,
+	Spring MVC,
+	Spring Cloud,
+	Spring Data,
+	others(IOC,AOP,DAO,Context,ORM,WEB MVC)
+
+it is lightweight
+it help to create a loosely coupled application
+it is open source
+it provide infrastructure that support for developing J2EE application
+
+
+Advantages of Spring Framework:
+1) it provide predefine template for JDBC, Hibernnate, JPA etc
+2) loose Coupling because dependency injection
+3) Easy to test 
+4) Lightweight because of POJO implementation 
+5) Fast development
+6) powerfull abstraction to javaEE specification such as JMS JDBC JPA
