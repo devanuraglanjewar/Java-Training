@@ -23,3 +23,50 @@ Advantages of Spring Framework:
 5) Fast development
 6) powerfull abstraction to javaEE specification such as JMS JDBC JPA
 
+Dependency Injection:
+1) It is a design pattern that removes the dependency from programming code so that it can be 
+   easy to manage and test application.
+2) It make our programming code loosely coupled by removing dependencies 
+
+
+IOC (Inversion of Control) container: 
+1) It is responsible to instantiate, configure and assemble the objects.
+2) It gets information form XML file, 
+	                    Annotation based configuration, 
+			    java based configuration and work accordingly.
+
+There are three main operation that perform IOC Container
+1) To instantiate the application class
+2) To configure the object
+3) To assemble the dependencies between the objects.
+
+
+Types of spring dependency injection:
+1) Setter Dependency Injection
+2) Constructor Dependency Injection
+
+
+Core Spring Annotation:
+1) @SpringBootApplication 
+	it is a combination of 3 different annotation 
+	@EnableAutoConfiguration + @ComponentScan + @Configuration
+
+2) @Configuration
+3) @Been
+4) @Autowired
+5) @Component
+	@Controller(Component,MVC Controller) - presentation Layer
+	@Sevice(business logic) --- service Layer
+	@Repository(DAO classes) -- DAO Layer
+
+6) @ComponentScan
+7) @qualifier
+8) @lazy
+9) @Controller
+10) @ResponseBody
+11) @RequestBody
+
+
+
+
+	
