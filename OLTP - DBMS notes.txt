@@ -1,0 +1,412 @@
+
+OLTP - DBMS
+
+Database server: instance - installation a database server - MySQL 
+		 a server can have multiple database
+
+Database: A database is a folder which store data objects like table, stored procedure, views.
+	  A database uses a file format to store a data and the files are divided into the pages similar to notebook.
+
+Entity: A entity is use to represent a real world thing which is called as a table in database 
+	ex: person, car
+
+Attributes: person[name, age, DOB]
+	    It is called it as a class in programming language 
+	    It is called it as a columns in database.
+
+SQL: Structured query language
+	DDL(create / alter / drop), DML( insert / update / delete) 
+ 
+Constraints: primary key, unique, check, default, foreign key, not null
+
+
+Datatype: 
+	CHAR
+	VARCHAR: 1 byte for 1 character - ASCII - only English - not support other language like Hindi Tamil
+	NVARCHAR / VARCHAR2: 2 byte for 1 character - Unicode
+
+
+Joins: 
+	using joins we combine the data from multiple tables it means basically we are combining the columns.
+
+	Types of joins: 
+		INNER JOIN = Common record from both the tables,
+		LEFT OUTER JOIN = common + all records from left table,
+		RIGHT OUTER JOINS = Common + all recode from right table,
+		FULL JOINS = all records from right an left join
+		SELF JOIN = 
+SYNTAX (JOINS)
+SELECT * FROM country INNER JOIN state_of_c ON country.cid = state_of_c.cid  INNER JOIN CITY ON CITY.sateid = state_of_c.cid;  
+               TABLE              TABLE NAME     (COMMON COLUMN IN BOTH)                TABLE       (COMMON COLUMN IN BOTH)
+		NAME                                                                     NAME
+
+
+UNION | INTERSET | EXCEPT
+RULE: Table structure should be same.
+
+UNION: 
+ It combine rows from multiple table
+ It gives all record from both the table
+ syntax
+	SELECT * FROM table1 UNION SELECT * FROM  table2
+
+INTERSET: 
+ It gives only common records from both table
+ syntax
+	SELECT * FROM table1 INTERSET SELECT * FROM  table2
+
+EXCEPT: 
+ It gives records that are not common in both table
+ syntax
+	SELECT * FROM table1 EXCEPT SELECT * FROM  table2
+
+
+
+
+Relationship :
+	It help to remove redundancy from the table
+	Types of relationship:
+		1) One to one 
+		2) one to many
+		3) many to many
+
+
+Normalization:
+1NF:
+	EACH COLUMN SHOULD HAVE ONE VALUE
+	DUPLICATE COLUMN SHOULD NOT BE THEIR
+	
+2NF:	No partial dependency 
+	TABLE SHOULD BE IN 1 NF
+	
+	
+3NF:
+	MUST BE IN 2NF 
+	IF SOME COLUMN IS NOT DEPENDENT ON TABLE'S PRIMARY KEY THEN SEPERATE IT OUT
+	
+
+
+VIEWS: It is just a virtual table
+views dose not store any data on its own 
+it is just a reference to the table 
+a view can be created on single table or multiple table
+
+why view:
+views are use to hide the complexity 
+views are use to hide the data, security
+
+SYNTAX: 
+CREATE VIEW vw_transaction as (
+select custid, cust_name, t_date, loc, food_in_india FROM money_entry INNER JOIN india_outlet ON money_entry.ifid = india_outlet.ifid 
+);
+
+syntax to modify view table
+CREATE OR REPLACE VIEW vw_transaction AS(
+SELECT custid, cust_name, t_date, loc FROM money_entry 
+);
+
+Types of view
+	SIMPLE VIEWS: IT ALLOW ALL OPERATION
+
+	COMPLEX VIEWS: IT CREATE WITH JOINS AND ALLOW ONLY LIMITED OPERATION
+
+	MATERILALIZED VIEWS:  IT PROVIDE PERFOMANCE / MANTAINANCE PROBLEM/ OPERATION HAPPEN IN VIEWS ITSELF / EVERYTIME WE NEED TO REFERESH DATA TO GET UPDATED DATA
+	
+----------------------------------------------------------------------------------------------------------------------------------
+  
+Sub query / CTE / TEMP TABLES
+
+Sub query / CTE : the scope is only within the query,
+			THESE ARE USE TO PASSED ONLY ONE QUERY RESULTSET INTO ANOTHER QUERY
+		SYNTAX 
+			SELECT * FROM (SUBQUERY);
+
+
+TEMP TABLES: CAN BE USE IN MULTIPLE WITHEN THE SESSION 
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Stored procedure is a block of code which is stored as a program that can be reused
+
+SYNTAX:
+CREATE OR REPLACE PROCEDURE CALCULATOR_SP(num1 float, num2 float)
+language plpgsql
+as $$
+declare
+	addsp float := num1 + num2;
+	subsp float := num1 - num2;
+	multisp float := num1 * num2;
+begin
+raise notice 'addition of tow number =%',addsp;
+raise notice 'substraction of tow number =%',subsp;
+raise notice 'multiplaction of tow number =%',multisp;
+end;$$
+
+call CALCULATOR_SP(10,20);
+
+
+
+loop in plpgsql
+
+CREATE OR REPLACE PROCEDURE multiplaction(num1 int )
+language plpgsql
+as $$
+declare
+	n1 int :=1;
+	val1 int :=0;
+begin
+While (n1 <= 10) loop
+	val1 = num1 * n1;
+	raise notice '% * % = %', num1,n1,val1;
+	n1 := n1+1;
+end loop;
+end;$$
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+query life cycles or query execution flow
+------------------------------------------------------
+1. parsing the query - syntax
+2. parsing the object - semantics (it will check whatever are the object we uses in query is present in db or not (like emp , dept )) 
+3. query optimizer - best way to execute the query
+    create plans and choose best way to execute the query
+4. query + plans = storage engines( their are two types of engines - relation and storage engines - relation engine is responsible for making relation 
+between tables and storage engines is responsible for managing storage) 
+5. result is given to the client using network
+
+-------------------------------
+temp tables - data migration
+views - reports/data analytics
+cte/subquery - passing result from one query to another query
+--------------------------------------------------------------
+
+
+EXCEPTION HANDALING
+
+CREATE OR REPLACE PROCEDURE sp_calcu()
+language plpgsql
+as $$
+declare 
+	t int;
+begin
+	t := n1 /n2;
+	raise notice 'total = %', t;
+exception
+	when others then 
+		raise notice 'exception occured at %', SQLSTATE;
+end; $$
+
+call sp_calcu (10,0);
+
+
+-- FOR EXCPTION LOGING
+
+
+CREATE TABLE ERRORLOGS (
+ERRORID INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+ERRORMSG VARCHAR (2000),
+ERRORSTATE VARCHAR (2000),
+ERRORGENERATEDBY VARCHAR (2000),
+ERRORDATETIME TIMESTAMP
+);
+
+CREATE OR REPLACE PROCEDURE gen_log(n1 int, n2 int)
+language plpgsql
+as $$
+declare 
+	t int;
+begin
+	begin
+	t := n1 /n2;
+	raise notice 'total = %', t;
+	exception
+	when others then 
+		raise notice 'exception occured at %', SQLSTATE;
+				INSERT INTO ERRORLOGS(ERRORMSG,ERRORSTATE,ERRORGENERATEDBY,ERRORDATETIME) VALUES (SQLERRM,SQLSTATE,CURRENT_USER,NOW());
+	END;
+	 
+	t := n1+n2;
+	exception
+	when others then 
+		raise notice 'exception occured at %', SQLSTATE;
+		INSERT INTO ERRORLOGS(ERRORMSG,ERRORSTATE,ERRORGENERATEDBY,ERRORDATETIME) VALUES (SQLERRM,SQLSTATE,CURRENT_USER,NOW());
+end; $$
+
+call gen_log (10,0);
+
+SELECT * FROM ERRORLOGS;
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+User define exception (raising a exception)
+basically we can create exception as per the requirement and we can also store in the error log table
+
+syntax:
+
+IF (eng_m >100 OR scn_m > 100 OR math_m > 100) THEN
+		RAISE EXCEPTION 'YOUR INPUT VALUE IS OUT OF RANGE';
+	END IF;
+
+----------------------------------------------------------------------------------------------------------------------
+
+SPs - Function - triggers
+
+Function ------------------------------
+A function always return a value
+A function can be use inside select statement 
+
+SYNTAX
+--------
+CREATE OR REPLACE FUNCTION function_name(par1 datatype)
+RETURN DATATYPE
+LANGUAGE plpgsql
+AS $$
+BEGIN 
+SATEMENTS;
+RETURN VALUE;
+END; $$
+
+Stored procedure -----------------------------------
+a stored procedure dose not always return a value
+a stored procedure can not be used inside select statement
+
+
+---------------------------------------------------------------------------------------------------------------------------
+FUNCTIONS 
+
+
+There are two type of function
+ - table value function 
+	CREATE OR REPLACE FUNCTION function_name(par1 datatype)
+	RETURN TABLE (table columns)
+	LANGUAGE plpgsql
+	AS $$
+	BEGIN 
+	SATEMENTS;
+	RETURN (query);
+	END; $$
+		- use 
+		when we want to get complete data of table and perform some operation as well
+
+
+ - single value function 
+-----------------------------------------------------------------------------------------------------------------------------
+TRIGGERS
+
+Triggers are sql statement which are invoked automatically on insert, update and delete on a table
+trigger store temp data
+
+USE:
+ Maintains audits, history of data
+
+Triggers are created on table and there are 12 types of triggers
+there are main 3 types
+
+- before insert
+- before update
+- before delete
+
+- Instead of insert
+- Instead of update
+- Instead of delete
+
+- after insert
+- after update
+- after delete
+
+keyword inside trigger
+- new : it will give new value
+- old : it will give old value
+-----------------------------------------
+
+Trigger for auditing
+for creating of audits on any table we need to follow these steps
+- step 1 >> CREATE A AUDIT TABLE
+- STEP2 >> ON UPDATE STORE THE OLD VALUES INTO THE AUDIT TABLE 
+
+------------------------------------------------------------------------------------------------------------------------------
+Explne / explane analysis
+
+SELECT * 
+
+
+-------------------------------------------------------------------------------------------------------------------------
+# Index
+- it help to optimize query and increase performance
+
+SYNTAX 
+CREATE INDEX index_name ON table_name (column_name)
+----------------------------------------------------
+TYPES OF INDEXES
+1} clustred index / btree index (default index, main index)
+-> this is the primary index of the table
+	CREATE INDEX index_name ON table_name (column_name)
+
+2} Multi - column index
+-> The index will be created on multi columns 
+	CREATE INDEX index_name ON table_name (column1,column2,column3)
+
+
+3} Unique index
+-> it should be make on unique column 
+	CREATE UNIQUE INDEX index_name ON table_name (bookid)
+
+4} Partial Index
+-> partial index will create only on certain column values of the table 
+	CREATE UNIQUE INDEX index_name ON table_name (bookid) WHERE condition
+
+5} Hash Index
+-> It use hash model to store values, it dose not use tree structure followed by B-TREE
+	CREATE INDEX index_name ON table_name USING HASH (COLUMN_NAME);
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+# Windows function
+  LEAD, LAG, FIRST_VALUE, LAST_VALUE, NTILE
+
+--------------------------------------------------------------------------------------------------------------------------------
+# MATH FUNCTION
+
+SQRT, POWER, SQUARE, CEILING, FLOOR, ROUND, 
+---------------------------------------------------------------------------------------------------------------------------------
+# Date time function
+current date, 
+
+---------------------------------------------------------------------------------------------------------------------------------
+# Cursor
+
+it is the pointer to the record set or query using cursor, we can iterate the records and read the columns etc. and do operations on that 
+1} Declare cursor
+2} open cursor
+3} Fetch
+4} iteration through record using loop
+5} close cursor 
+
+Disadvantage
+1 it consume lots of memory
+
+
+SYNTAX 
+do
+$$
+declare 
+	cur_emp CURSOR FOR SELECT emp_id, emp_name FROM employees;
+	eid int;
+	ename varchar(100);
+
+Begin
+	OPEN cur_emp;
+	fetch next from cur_emp into eid,ename;
+	loop
+	raise notice 'ID = %  Name = %',eid,ename;
+	fetch next from cur_emp into eid,ename;
+	exit when not found;
+	end loop;
+end;$$
+---------------------------------------------------------------------------------------------------------------------------------
+# SUBQUERY
+
+SYNTAX
+SELECT * FROM (SUBQUERY);
+SELECT * FROM table_name WHERE column_name (SUBQUERY);
+
